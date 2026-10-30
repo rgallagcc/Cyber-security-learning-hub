@@ -77,6 +77,16 @@ footer{background:var(--char);color:var(--van);padding:1.4rem 0;font-size:.85rem
 footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 footer p{margin:0}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}#bar{transition:none}}
+
+.home-link {
+    margin-bottom: 0.5rem;
+}
+
+.home-link a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
 </style>
 </head>
 <body>
@@ -92,8 +102,12 @@ footer p{margin:0}
 </header>
 
 <nav aria-label="Page sections">
+
+   <div class="home-link">
+      <a href="index.html">🏠 Home</a>
+   </div>
+   
   <ul>
-    <li><a href="index.html">Home</a></li>
     <li><a href="#intro">Introduction</a></li>
     <li><a href="#objectives">Objectives</a></li>
     <li><a href="#theory">Theory</a></li>
