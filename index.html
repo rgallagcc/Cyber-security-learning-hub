@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cyber Security Learning Hub | Glasgow Clyde College</title>
+<style>
+:root{--yellow:#ffd200;--char:#2b2727;--van:#faefe6;--pink:#f964f5;--mint:#77f1b6;--blue:#005eff;--coral:#ff6359;--card:#fff9f4}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--van);color:var(--char);font:1.05rem/1.65 "Loos Normal","Sofia Sans","Segoe UI",system-ui,sans-serif}
+.h,h1,h2{font-family:"Sink",Impact,"Haettenschweiler","Arial Narrow Bold",sans-serif;text-transform:uppercase;font-weight:400;letter-spacing:.01em;line-height:1.02;margin:0 0 .6em}
+h3{font-size:1.25rem;margin:0 0 .4em;line-height:1.25}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.skip{position:absolute;left:-999px;background:var(--char);color:var(--van);padding:.6rem 1rem;z-index:9}
+.skip:focus{left:8px;top:8px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 1.25rem}
+header.hero{background:var(--char);color:var(--van);position:relative;overflow:hidden;padding:3.8rem 0 7.5rem}
+.hero h1{font-size:clamp(2.6rem,8vw,4.6rem);max-width:16ch;color:var(--yellow)}
+.hero p{max-width:40em;font-size:1.2rem}
+.arc{position:absolute;right:-70px;bottom:-30px;width:520px;height:250px;border:46px solid var(--pink);border-bottom:0;border-radius:250px 250px 0 0;transform:rotate(-8deg)}
+nav{background:var(--char);position:sticky;top:0;z-index:5;border-top:2px solid var(--yellow)}
+nav ul{list-style:none;margin:0;padding:.5rem 1.25rem;display:flex;gap:.25rem 1.1rem;flex-wrap:wrap;max-width:1040px;margin:auto}
+nav a{color:var(--van);font-size:.95rem;text-decoration:none;padding:.3rem .2rem}
+nav a:hover{color:var(--yellow);text-decoration:underline}
+section{padding:3rem 0;border-bottom:2px solid var(--char)}
+section h2{font-size:clamp(2rem,5.5vw,3rem)}
+.lede{max-width:46em;font-size:1.08rem}
+.flow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:stretch;margin:1.2rem 0;padding:0;list-style:none}
+.flow li{flex:1 1 150px;border:2px solid var(--char);border-radius:12px;padding:.8rem .9rem;font-size:.95rem;background:var(--card)}
+.flow li:nth-child(1){background:var(--yellow)}.flow li:nth-child(2){background:var(--mint)}.flow li:nth-child(3){background:var(--pink)}.flow li:nth-child(4){background:var(--coral)}
+.flow b{display:block;font-size:1.05rem}
+.path-head{display:flex;align-items:baseline;justify-content:space-between;flex-wrap:wrap;gap:.6rem;margin-bottom:.3rem}
+.path-head p{margin:0;font-size:.95rem;opacity:.85}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1rem;margin-top:1.2rem}
+.room{border:2px solid var(--char);border-radius:14px;padding:1.1rem 1.2rem;background:var(--card);display:flex;flex-direction:column;gap:.5rem;position:relative}
+.room.done{background:var(--mint)}
+.room .num{display:inline-flex;align-items:center;justify-content:center;width:2rem;height:2rem;border:2px solid var(--char);border-radius:50%;font-weight:700;background:var(--yellow);flex:0 0 auto}
+.room h3{font-size:1.15rem}
+.room p{margin:0;font-size:.95rem;flex:1}
+.tags{display:flex;gap:.4rem;flex-wrap:wrap}
+.tag{font-size:.75rem;font-weight:700;border:2px solid var(--char);border-radius:999px;padding:.15rem .6rem;background:#fff}
+.room .actions{display:flex;align-items:center;justify-content:space-between;gap:.6rem;margin-top:.3rem}
+.btn{font:inherit;font-weight:700;text-decoration:none;display:inline-block;cursor:pointer;border:2px solid var(--char);border-radius:999px;padding:.5rem 1.1rem;background:var(--char);color:var(--van)}
+.btn:hover{background:var(--blue)}
+.btn[aria-disabled=true]{opacity:.55;pointer-events:none}
+.check{display:flex;align-items:center;gap:.4rem;font-size:.85rem;font-weight:700}
+.room.soon{background:#efe2d3;opacity:.9}
+.room.soon .num{background:#d8c9b4}
+.future .room{background:#efe2d3}
+.future .num{background:#d8c9b4}
+.card{background:var(--card);border:2px solid var(--char);border-radius:14px;padding:1.2rem 1.4rem;margin:1.2rem 0}
+.card.yellow{background:var(--yellow)}
+.progress-wrap{display:flex;align-items:center;gap:.8rem;flex-wrap:wrap}
+.bar-wrap{height:16px;border:2px solid var(--char);border-radius:99px;background:#fff;overflow:hidden;flex:1 1 200px}
+#hub-bar{height:100%;width:0;background:var(--pink);transition:width .4s}
+footer{background:var(--char);color:var(--van);padding:1.4rem 0;font-size:.85rem;letter-spacing:.06em}
+footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+footer p{margin:0}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}#hub-bar{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<!-- Insert the official Glasgow Clyde College logo here, straight and unaltered, in Vanilla on this charcoal band. -->
+
+<header class="hero">
+  <div class="wrap">
+    <h1>Cyber security learning hub</h1>
+    <p>A set of short, self-contained rooms for practising ethical hacking fundamentals safely. Work through them in order, capture a flag in each, and download the evidence file to submit on Canvas.</p>
+  </div>
+  <div class="arc" aria-hidden="true"></div>
+</header>
+
+<nav aria-label="Page sections">
+  <ul>
+    <li><a href="#how">How it works</a></li>
+    <li><a href="#path1">Path 1: Web &amp; access fundamentals</a></li>
+    <li><a href="#future">Future paths</a></li>
+  </ul>
+</nav>
+
+<main id="main">
+
+<section id="how" aria-labelledby="how-h"><div class="wrap">
+  <h2 id="how-h">How each room works</h2>
+  <p class="lede">Every room follows the same shape, so once you know one, you know them all. Each one is a single page: no installs, no accounts, nothing to configure.</p>
+  <ol class="flow" aria-label="Room structure">
+    <li><b>1. Learn</b>A short, beginner-friendly theory section with analogies and a mini quiz.</li>
+    <li><b>2. Practise</b>A safe, simulated target site with tasks that build in difficulty.</li>
+    <li><b>3. Capture</b>Decode or discover a flag and submit it for instant feedback.</li>
+    <li><b>4. Evidence</b>Download a results file with your answers and flag status for Canvas.</li>
+  </ol>
+  <div class="card yellow">
+    <h3 style="margin-top:0">Before you start</h3>
+    <p style="margin:0">Every target in every room is fictional and fully simulated in your browser. Only ever test real systems you own or have explicit permission to test &mdash; accessing real systems without authorisation is a criminal offence under the Computer Misuse Act 1990.</p>
+  </div>
+</div></section>
+
+<section id="path1" aria-labelledby="p1-h"><div class="wrap">
+  <div class="path-head">
+    <h2 id="p1-h" style="margin-bottom:0">Path 1: web &amp; access fundamentals</h2>
+    <p>Beginner → Intermediate &middot; 5 live rooms, more on the way</p>
+  </div>
+  <p class="lede">Start at Room 1 and work down. Each room hands off to the next, and later rooms assume you've met the ideas from earlier ones.</p>
+
+  <div class="card" aria-label="Your progress in this browser">
+    <div class="progress-wrap">
+      <strong id="hub-prog-text">Progress: 0 of 6 rooms marked complete</strong>
+      <div class="bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0" aria-labelledby="hub-prog-text"><div id="hub-bar"></div></div>
+    </div>
+    <p style="margin:.6rem 0 0;font-size:.85rem">Ticking a box below just helps you keep track in this browser &mdash; it isn't sent anywhere and isn't a record of your actual results. Use each room's own "Download evidence file" button for that.</p>
+  </div>
+
+  <div class="grid">
+    <article class="room" data-room="recon">
+      <span class="num" aria-hidden="true">1</span>
+      <h3>Recon 101: follow the breadcrumbs</h3>
+      <p>Read page source, check robots.txt, spot a directory listing and decode Base64.</p>
+      <div class="tags"><span class="tag">Beginner</span><span class="tag">~25 min</span></div>
+      <div class="actions">
+        <a class="btn" href="recon-101-challenge.html">Start room</a>
+        <label class="check"><input type="checkbox" class="done-check" data-room="recon"> Done</label>
+      </div>
+    </article>
+
+    <article class="room" data-room="headers">
+      <span class="num" aria-hidden="true">2</span>
+      <h3>HTTP headers: what your browser isn't telling you</h3>
+      <p>Status codes, information-leaking headers, missing security headers, and a hidden encoded value.</p>
+      <div class="tags"><span class="tag">Beginner</span><span class="tag">~25 min</span></div>
+      <div class="actions">
+        <a class="btn" href="http-headers-challenge.html">Start room</a>
+        <label class="check"><input type="checkbox" class="done-check" data-room="headers"> Done</label>
+      </div>
+    </article>
+
+    <article class="room" data-room="cookies">
+      <span class="num" aria-hidden="true">3</span>
+      <h3>Cookies &amp; sessions: the trust you carry in your pocket</h3>
+      <p>Cookie attributes, predictable session IDs, and why encoding isn't the same as protecting data.</p>
+      <div class="tags"><span class="tag">Beginner–Intermediate</span><span class="tag">~25 min</span></div>
+      <div class="actions">
+        <a class="btn" href="cookies-sessions-challenge.html">Start room</a>
+        <label class="check"><input type="checkbox" class="done-check" data-room="cookies"> Done</label>
+      </div>
+    </article>
+
+    <article class="room" data-room="login">
+      <span class="num" aria-hidden="true">4</span>
+      <h3>Login enumeration: when error messages talk too much</h3>
+      <p>Spot a username-enumeration leak, then combine it with a weak password to get in.</p>
+      <div class="tags"><span class="tag">Intermediate</span><span class="tag">~25 min</span></div>
+      <div class="actions">
+        <a class="btn" href="login-enumeration-challenge.html">Start room</a>
+        <label class="check"><input type="checkbox" class="done-check" data-room="login"> Done</label>
+      </div>
+    </article>
+
+    <article class="room" data-room="access">
+      <span class="num" aria-hidden="true">5</span>
+      <h3>Access control: who's allowed to see what</h3>
+      <p>Horizontal vs vertical privilege escalation, an IDOR, and forced browsing into an unprotected admin page.</p>
+      <div class="tags"><span class="tag">Intermediate</span><span class="tag">~30 min</span></div>
+      <div class="actions">
+        <a class="btn" href="access-control-challenge.html">Start room</a>
+        <label class="check"><input type="checkbox" class="done-check" data-room="access"> Done</label>
+      </div>
+    </article>
+
+    <article class="room soon" data-room="sqli" aria-disabled="true">
+      <span class="num" aria-hidden="true">6</span>
+      <h3>SQL injection: when input becomes instruction</h3>
+      <p>Coming soon &mdash; login bypass, union-based and error-based injection, told as a simulation.</p>
+      <div class="tags"><span class="tag">Intermediate</span><span class="tag">Coming soon</span></div>
+      <div class="actions">
+        <span class="btn" aria-disabled="true">Coming soon</span>
+        <label class="check" style="opacity:.6"><input type="checkbox" disabled> Done</label>
+      </div>
+    </article>
+  </div>
+</div></section>
+
+<section id="future" aria-labelledby="fut-h" style="border-bottom:0"><div class="wrap future">
+  <div class="path-head">
+    <h2 id="fut-h" style="margin-bottom:0">Future paths</h2>
+    <p>More rooms are being built &mdash; this hub will grow to link them here</p>
+  </div>
+  <p class="lede">Once Path 1 is finished, later paths will build on it. Nothing below is live yet; it's here so the hub has a home for each path as it's published.</p>
+
+  <div class="grid">
+    <article class="room soon">
+      <span class="num" aria-hidden="true">2</span>
+      <h3>Path 2: encoding &amp; cryptography basics</h3>
+      <p>Base64, hex, ROT13 and Caesar ciphers, then XOR, JWTs and hash recognition.</p>
+      <div class="tags"><span class="tag">Coming soon</span></div>
+    </article>
+    <article class="room soon">
+      <span class="num" aria-hidden="true">3</span>
+      <h3>Path 3: injection &amp; input validation</h3>
+      <p>SQL injection (continuing from Room 6 above), cross-site scripting, and secure coding fixes.</p>
+      <div class="tags"><span class="tag">Coming soon</span></div>
+    </article>
+    <article class="room soon">
+      <span class="num" aria-hidden="true">4</span>
+      <h3>Path 4: client-side &amp; business logic</h3>
+      <p>Client-side storage and validation bypass, CSRF, file upload weaknesses and business logic flaws.</p>
+      <div class="tags"><span class="tag">Coming soon</span></div>
+    </article>
+    <article class="room soon">
+      <span class="num" aria-hidden="true">5</span>
+      <h3>Path 5: OSINT &amp; steganography</h3>
+      <p>Open-source investigation techniques and hidden-data challenges, CTF-style.</p>
+      <div class="tags"><span class="tag">Coming soon</span></div>
+    </article>
+    <article class="room soon">
+      <span class="num" aria-hidden="true">6</span>
+      <h3>Path 6: APIs &amp; server misconfiguration</h3>
+      <p>API authorisation flaws, exposed backups, verbose errors and other common misconfigurations.</p>
+      <div class="tags"><span class="tag">Coming soon</span></div>
+    </article>
+    <article class="room soon">
+      <span class="num" aria-hidden="true">7</span>
+      <h3>Final boss: capture-the-flag scenario</h3>
+      <p>A multi-step challenge chaining skills from every path into one longer investigation.</p>
+      <div class="tags"><span class="tag">Coming soon</span></div>
+    </article>
+  </div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><p>©2026 GLASGOW CLYDE COLLEGE</p><p>CYBER SECURITY LEARNING HUB</p><p>#LIFECHANGINGSTUFF</p></div></footer>
+
+<script>
+(function(){
+  var KEY = 'gcc-cyber-hub-progress';
+  var boxes = document.querySelectorAll('.done-check');
+  var total = document.querySelectorAll('.room[data-room]').length; // includes the "coming soon" SQLi card
+
+  function load(){
+    try{
+      var raw = localStorage.getItem(KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){ return {}; }
+  }
+  function save(state){
+    try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){ /* storage unavailable: progress just won't persist */ }
+  }
+  function updateBar(){
+    var state = load();
+    var done = Object.keys(state).filter(function(k){ return state[k]; }).length;
+    document.getElementById('hub-prog-text').textContent = 'Progress: ' + done + ' of ' + total + ' rooms marked complete';
+    var bar = document.getElementById('hub-bar');
+    bar.style.width = (total ? (done/total*100) : 0) + '%';
+    document.querySelector('#path1 [role=progressbar]').setAttribute('aria-valuenow', done);
+  }
+
+  var state = load();
+  boxes.forEach(function(box){
+    var room = box.getAttribute('data-room');
+    box.checked = !!state[room];
+    var article = box.closest('.room');
+    if(box.checked) article.classList.add('done');
+    box.addEventListener('change', function(){
+      var s = load();
+      s[room] = box.checked;
+      save(s);
+      article.classList.toggle('done', box.checked);
+      updateBar();
+    });
+  });
+  updateBar();
+})();
+</script>
+</body>
+</html>

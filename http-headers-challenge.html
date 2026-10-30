@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>HTTP Headers: what your browser isn't telling you | Cyber security challenge</title>
+<style>
+:root{--yellow:#ffd200;--char:#2b2727;--van:#faefe6;--pink:#f964f5;--mint:#77f1b6;--blue:#005eff;--coral:#ff6359;--card:#fff9f4}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--van);color:var(--char);font:1.05rem/1.65 "Loos Normal","Sofia Sans","Segoe UI",system-ui,sans-serif}
+.h,h1,h2{font-family:"Sink",Impact,"Haettenschweiler","Arial Narrow Bold",sans-serif;text-transform:uppercase;font-weight:400;letter-spacing:.01em;line-height:1.02;margin:0 0 .6em}
+h3{font-size:1.25rem;margin:1.4em 0 .4em;line-height:1.25}
+a{color:var(--blue)}
+:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.skip{position:absolute;left:-999px;background:var(--char);color:var(--van);padding:.6rem 1rem;z-index:9}
+.skip:focus{left:8px;top:8px}
+.wrap{max-width:900px;margin:0 auto;padding:0 1.25rem}
+header.hero{background:var(--electric,var(--blue));background:var(--blue);color:var(--van);position:relative;overflow:hidden;padding:3.5rem 0 7rem}
+.hero h1{font-size:clamp(2.6rem,8.5vw,5rem);max-width:14ch;color:var(--yellow)}
+.hero p{max-width:34em;font-size:1.2rem}
+.arc{position:absolute;right:-60px;bottom:-30px;width:480px;height:240px;border:46px solid var(--coral);border-bottom:0;border-radius:240px 240px 0 0;transform:rotate(-8deg)}
+nav{background:var(--char);position:sticky;top:0;z-index:5}
+nav ul{list-style:none;margin:0;padding:.5rem 1.25rem;display:flex;gap:.25rem 1rem;flex-wrap:wrap;max-width:900px;margin:auto}
+nav a{color:var(--van);font-size:.95rem;text-decoration:none;padding:.3rem .2rem}
+nav a:hover{color:var(--yellow);text-decoration:underline}
+section{padding:3rem 0;border-bottom:2px solid var(--char)}
+section h2{font-size:clamp(2rem,6vw,3.2rem)}
+.card{background:var(--card);border:2px solid var(--char);border-radius:14px;padding:1.2rem 1.4rem;margin:1.2rem 0}
+.card.mint{background:var(--mint)}.card.yellow{background:var(--yellow)}
+ul.tick{padding-left:1.2rem}
+ul.tick li{margin:.4rem 0}
+code,pre{font-family:ui-monospace,Consolas,Menlo,monospace}
+code{background:#eadccf;padding:.1em .35em;border-radius:4px;font-size:.92em}
+pre{background:var(--char);color:var(--van);padding:1rem;border-radius:10px;overflow-x:auto;font-size:.9rem;line-height:1.5;margin:.6rem 0;white-space:pre-wrap;word-break:break-word}
+pre .c{color:var(--mint)}pre .k{color:var(--yellow)}pre .bad{color:var(--coral)}
+table{border-collapse:collapse;width:100%;margin:.8rem 0;font-size:.95rem}
+th,td{border:2px solid var(--char);padding:.5rem .6rem;text-align:left;vertical-align:top}
+th{background:var(--yellow)}
+.flow{display:flex;flex-wrap:wrap;gap:.5rem;align-items:stretch;margin:1.2rem 0;padding:0;list-style:none}
+.flow li{flex:1 1 150px;border:2px solid var(--char);border-radius:12px;padding:.7rem .8rem;font-size:.95rem;background:var(--card)}
+.flow li:nth-child(1){background:var(--yellow)}.flow li:nth-child(2){background:var(--mint)}.flow li:nth-child(3){background:var(--pink)}.flow li:nth-child(4){background:var(--coral)}
+.flow b{display:block;font-size:1.05rem}
+button{font:inherit;font-weight:700;cursor:pointer;border:2px solid var(--char);border-radius:999px;padding:.55rem 1.2rem;background:var(--char);color:var(--van)}
+button:hover{background:var(--blue)}
+button.alt{background:var(--yellow);color:var(--char)}button.alt:hover{background:var(--pink)}
+button:disabled{opacity:.55;cursor:not-allowed}
+input[type=text]{font:inherit;padding:.55rem .8rem;border:2px solid var(--char);border-radius:10px;background:#fff;color:var(--char);min-width:0;flex:1 1 200px}
+label{font-weight:700;display:block;margin-bottom:.3rem}
+.row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+.fb{margin-top:.7rem;padding:.6rem .9rem;border-radius:10px;border:2px solid var(--char);font-weight:700;display:none}
+.fb.ok{display:block;background:var(--mint)}.fb.no{display:block;background:var(--coral)}.fb.info{display:block;background:var(--yellow)}
+.browser{border:2px solid var(--char);border-radius:12px;overflow:hidden;background:#fff;margin:1rem 0}
+.browser .bar{background:var(--char);padding:.6rem;display:flex;gap:.5rem;flex-wrap:wrap}
+.browser .bar span{color:var(--van);align-self:center;font-family:ui-monospace,Consolas,monospace;font-size:.9rem}
+.browser .bar button{background:var(--yellow);color:var(--char);padding:.4rem .9rem}
+.browser .bar button:hover{background:var(--pink)}
+.screen{padding:1rem 1.2rem;min-height:230px;background:var(--van)}
+.status-line{font-weight:700;margin:0 0 .5rem}
+.bar-wrap{height:16px;border:2px solid var(--char);border-radius:99px;background:#fff;overflow:hidden}
+#bar{height:100%;width:0;background:var(--pink);transition:width .4s}
+fieldset{border:2px solid var(--char);border-radius:12px;margin:.8rem 0;padding:.6rem 1rem}
+legend{font-weight:700;padding:0 .4rem}
+fieldset label{font-weight:400;margin:.3rem 0}
+textarea{font:inherit;width:100%;min-height:80px;border:2px solid var(--char);border-radius:10px;padding:.6rem;background:#fff;color:var(--char)}
+details{margin:.5rem 0}summary{cursor:pointer;font-weight:700}
+.hint{background:var(--yellow);border:2px solid var(--char);border-radius:10px;padding:.6rem .9rem;margin:.5rem 0}
+footer{background:var(--char);color:var(--van);padding:1.4rem 0;font-size:.85rem;letter-spacing:.06em}
+footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+footer p{margin:0}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}#bar{transition:none}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+<!-- Insert the official Glasgow Clyde College logo here, straight and unaltered, in Vanilla on this blue band. -->
+
+<header class="hero">
+  <div class="wrap">
+    <h1>HTTP headers: what your browser isn't telling you</h1>
+    <p>Every request and response carries a hidden envelope of metadata. Learn to read it, and you'll spot leaks and missing defences that the page itself never shows you.</p>
+  </div>
+  <div class="arc" aria-hidden="true"></div>
+</header>
+
+<nav aria-label="Page sections">
+  <ul>
+    <li><a href="#intro">Introduction</a></li>
+    <li><a href="#objectives">Objectives</a></li>
+    <li><a href="#theory">Theory</a></li>
+    <li><a href="#demo">Demonstration</a></li>
+    <li><a href="#challenge">Challenge</a></li>
+    <li><a href="#hints">Hints</a></li>
+    <li><a href="#flag">Flag</a></li>
+    <li><a href="#reflect">Reflection</a></li>
+    <li><a href="#export">Export</a></li>
+    <li><a href="#takeaways">Takeaways</a></li>
+  </ul>
+</nav>
+
+<main id="main">
+
+<section id="intro" aria-labelledby="intro-h"><div class="wrap">
+  <h2 id="intro-h">Introduction</h2>
+  <p>When your browser asks a website for a page, it doesn't just send the address. It sends a bundle of extra information called headers, and the server replies with a bundle of its own. Neither bundle shows up on screen, but both are easy to read if you know where to look.</p>
+  <h3>Why does it matter?</h3>
+  <p>Headers often say more than they should. A server might announce exactly which software version it's running, handing an attacker a shortcut to known weaknesses. Or a site might simply forget to set headers that protect visitors, leaving the door open to attacks like clickjacking.</p>
+  <h3>Where does this happen in real life?</h3>
+  <p>Security scanners check headers automatically, and so do attackers. Missing security headers are one of the most common, most avoidable findings in real penetration test reports.</p>
+  <div class="card mint">
+    <h3 style="margin-top:0">An analogy</h3>
+    <p>Think of a parcel. The contents are the webpage. The label on the outside is the headers: sender, courier, handling instructions, maybe a barcode. You can learn a lot about a parcel without ever opening it, just by reading the label.</p>
+  </div>
+  <div class="card yellow">
+    <h3 style="margin-top:0">Stay legal</h3>
+    <p>Only inspect headers on systems you own or have permission to test. This room is a complete simulation, so explore freely.</p>
+  </div>
+</div></section>
+
+<section id="objectives" aria-labelledby="obj-h"><div class="wrap">
+  <h2 id="obj-h">Learning objectives</h2>
+  <ul class="tick">
+    <li>Explain the difference between a request header and a response header.</li>
+    <li>Read an HTTP status code and know roughly what it means.</li>
+    <li>Recognise headers that leak information, such as <code>Server</code> and <code>X-Powered-By</code>.</li>
+    <li>Name common security headers and what each one defends against.</li>
+    <li>Find and decode a value hidden inside a response header.</li>
+  </ul>
+</div></section>
+
+<section id="theory" aria-labelledby="theory-h"><div class="wrap">
+  <h2 id="theory-h">Theory</h2>
+
+  <h3>Idea 1: a request and a response both carry headers</h3>
+  <ol class="flow" aria-label="Request and response flow">
+    <li><b>1. You ask</b>Browser sends a request: method, path, and request headers.</li>
+    <li><b>2. Server replies</b>A status code, then response headers.</li>
+    <li><b>3. Then the body</b>The actual HTML, image or file.</li>
+    <li><b>4. You read it</b>A header inspector shows all of this at once.</li>
+  </ol>
+
+  <h3>Idea 2: status codes are a quick summary</h3>
+  <table>
+    <tr><th>Range</th><th>Meaning</th><th>Example</th></tr>
+    <tr><td>2xx</td><td>Success</td><td>200 OK</td></tr>
+    <tr><td>3xx</td><td>Redirect</td><td>301 Moved Permanently</td></tr>
+    <tr><td>4xx</td><td>Client error</td><td>403 Forbidden, 404 Not Found</td></tr>
+    <tr><td>5xx</td><td>Server error</td><td>500 Internal Server Error</td></tr>
+  </table>
+  <p>A 403 on <code>/admin</code> confirms the page exists, it's just refusing you. That's useful recon, even without seeing the page.</p>
+
+  <h3>Idea 3: some headers leak more than intended</h3>
+  <pre>Server: nginx/1.14.0
+<span class="bad">X-Powered-By: PHP/7.2.0</span></pre>
+  <p>Naming the exact software version tells an attacker precisely which known weaknesses to try. Good practice is to remove or generalise these headers.</p>
+
+  <h3>Idea 4: security headers are defences, not decoration</h3>
+  <table>
+    <tr><th>Header</th><th>Defends against</th></tr>
+    <tr><td><code>X-Frame-Options</code> / CSP <code>frame-ancestors</code></td><td>Clickjacking: the page being loaded inside an invisible frame on another site</td></tr>
+    <tr><td><code>Content-Security-Policy</code></td><td>Limits where scripts and content can load from, reducing XSS impact</td></tr>
+    <tr><td><code>Strict-Transport-Security</code></td><td>Forces the browser to always use HTTPS</td></tr>
+    <tr><td><code>X-Content-Type-Options: nosniff</code></td><td>Stops the browser guessing a file's type in a risky way</td></tr>
+  </table>
+  <fieldset>
+    <legend>Mini quiz: which header?</legend>
+    <p>A site can be loaded inside a hidden frame on an attacker's page, tricking users into clicking things they can't see. Which header family is missing?</p>
+    <label><input type="radio" name="q1" value="a"> X-Content-Type-Options</label>
+    <label><input type="radio" name="q1" value="b"> X-Frame-Options / Content-Security-Policy</label>
+    <label><input type="radio" name="q1" value="c"> Server</label>
+    <button type="button" class="alt" id="q1-btn">Check answer</button>
+    <div class="fb" id="q1-fb" role="status"></div>
+  </fieldset>
+</div></section>
+
+<section id="demo" aria-labelledby="demo-h"><div class="wrap">
+  <h2 id="demo-h">Demonstration</h2>
+  <p>Worked example on a fictional site, <code>northbank-shop.example</code>:</p>
+  <div class="card">
+    <p class="status-line">GET /  &rarr;  200 OK</p>
+    <pre>Server: Apache/2.2.3
+<span class="bad">X-Powered-By: PHP/5.3.1</span>
+Content-Type: text/html</pre>
+    <p>Apache 2.2.3 and PHP 5.3.1 are both very old. A quick search for either version turns up long lists of known weaknesses. The fix isn't to panic, it's to upgrade the software and stop announcing the exact version in headers.</p>
+    <p class="status-line">GET /checkout  &rarr;  200 OK</p>
+    <pre>Content-Type: text/html
+Set-Cookie: session=abc123</pre>
+    <p>No <code>X-Frame-Options</code> or CSP here either. A page handling payments with no clickjacking defence is a real finding worth reporting.</p>
+  </div>
+</div></section>
+
+<section id="challenge" aria-labelledby="ch-h"><div class="wrap">
+  <h2 id="ch-h">Challenge</h2>
+  <p>Your target is <code>riverside-books.example</code>. Use the simulated inspector below: pick a path and send the request to see its status code, headers and body.</p>
+
+  <div class="card" aria-label="Progress">
+    <p class="status-line" id="prog-text">Progress: 0 of 4 tasks complete</p>
+    <div class="bar-wrap" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-labelledby="prog-text"><div id="bar"></div></div>
+  </div>
+
+  <div class="browser" role="region" aria-label="Simulated header inspector">
+    <form class="bar" id="nav-form" aria-label="Request builder">
+      <span aria-hidden="true">riverside-books.example</span>
+      <label for="path" style="position:absolute;left:-999px">Path</label>
+      <input type="text" id="path" value="/" autocomplete="off" spellcheck="false" style="max-width:220px">
+      <button type="submit">Send request</button>
+    </form>
+    <div class="screen" id="screen" aria-live="polite" tabindex="0" aria-label="Response"></div>
+  </div>
+
+  <div class="card">
+    <h3 style="margin-top:0">Task 1: read a status code (easy)</h3>
+    <p>Send a request to <code>/staff-area</code>. What status code comes back?</p>
+    <div class="row"><label for="a1" style="margin:0">Status code</label><input type="text" id="a1" autocomplete="off"><button type="button" data-task="1">Check answer</button></div>
+    <div class="fb" id="fb1" role="status"></div>
+  </div>
+
+  <div class="card">
+    <h3>Task 2: spot the leak (easy–medium)</h3>
+    <p>Send a request to <code>/</code>. A response header names an outdated piece of software. What's the software called? (Just the name, no version needed.)</p>
+    <div class="row"><label for="a2" style="margin:0">Software name</label><input type="text" id="a2" autocomplete="off"><button type="button" data-task="2">Check answer</button></div>
+    <div class="fb" id="fb2" role="status"></div>
+  </div>
+
+  <div class="card">
+    <h3>Task 3: find the missing defence (medium)</h3>
+    <p>Send a request to <code>/basket</code>. Which security header is missing that would stop this page being loaded inside a hidden frame on another site?</p>
+    <fieldset>
+      <legend>Missing header</legend>
+      <label><input type="radio" name="t3" value="a"> X-Content-Type-Options</label>
+      <label><input type="radio" name="t3" value="b"> X-Frame-Options</label>
+      <label><input type="radio" name="t3" value="c"> Content-Length</label>
+    </fieldset>
+    <button type="button" data-task="3">Check answer</button>
+    <div class="fb" id="fb3" role="status"></div>
+  </div>
+
+  <div class="card">
+    <h3>Task 4: decode the hidden header (harder)</h3>
+    <p>Send a request to <code>/status</code>. One response header holds a Base64 value. Decode it below to get your flag.</p>
+    <label for="dec-in">Paste text to decode</label>
+    <div class="row"><input type="text" id="dec-in" autocomplete="off" spellcheck="false"><button type="button" class="alt" id="dec-btn">Decode Base64</button></div>
+    <pre id="dec-out" aria-live="polite">Output appears here.</pre>
+    <div class="row" style="margin-top:.6rem"><label for="a4" style="margin:0">Confirm: which header held it?</label><input type="text" id="a4" autocomplete="off"><button type="button" data-task="4">Check answer</button></div>
+    <div class="fb" id="fb4" role="status"></div>
+  </div>
+</div></section>
+
+<section id="hints" aria-labelledby="hint-h"><div class="wrap">
+  <h2 id="hint-h">Hints</h2>
+  <button type="button" class="alt" id="hint-btn">Show hint</button>
+  <div id="hint-list" aria-live="polite"></div>
+</div></section>
+
+<section id="flag" aria-labelledby="flag-h"><div class="wrap">
+  <h2 id="flag-h">Flag submission</h2>
+  <p>Submit the flag you decoded. Flags look like <code>FLAG{example_flag}</code>.</p>
+  <div class="row"><label for="flag-in" style="margin:0">Your flag</label><input type="text" id="flag-in" autocomplete="off" spellcheck="false" placeholder="FLAG{...}"><button type="button" id="flag-btn">Check flag</button></div>
+  <div class="fb" id="flag-fb" role="status"></div>
+</div></section>
+
+<section id="reflect" aria-labelledby="ref-h"><div class="wrap">
+  <h2 id="ref-h">Reflection questions</h2>
+  <div class="card"><label for="r1">1. Why might a company choose not to reveal exact software versions in headers, even though it costs nothing to leave them in?</label><textarea id="r1"></textarea>
+    <details><summary>Discussion points</summary><p>Version strings give attackers a head start on finding known weaknesses. Removing them doesn't fix the weaknesses, but it slows down casual scanning.</p></details></div>
+  <div class="card"><label for="r2">2. A 403 and a 404 both stop you getting in. Why is it still useful to tell them apart during recon?</label><textarea id="r2"></textarea>
+    <details><summary>Discussion points</summary><p>404 usually means nothing is there. 403 means something is there but protected, which tells you where to focus attention and what to report.</p></details></div>
+  <div class="card"><label for="r3">3. Missing security headers rarely break a site's normal use. Why do they still matter?</label><textarea id="r3"></textarea>
+    <details><summary>Discussion points</summary><p>They're defence in depth: not needed for the site to function, but important when something else goes wrong, like a script injection or an embedded frame.</p></details></div>
+  <div class="card"><label for="r4">4. How is reading headers similar to, and different from, reading a page's HTML source, which you practised in the recon room?</label><textarea id="r4"></textarea>
+    <details><summary>Discussion points</summary><p>Both are public information nobody hid behind a login. Headers are metadata about the exchange, while source is the page's actual content and structure.</p></details></div>
+  <div class="card"><label for="r5">5. If you were advising a small business on a budget, which header fix would you prioritise first, and why?</label><textarea id="r5"></textarea>
+    <details><summary>Discussion points</summary><p>There's no single right answer. Many practitioners would start with removing version-revealing headers and adding a frame-protection header, since both are quick, free and low-risk changes.</p></details></div>
+</div></section>
+
+<section id="export" aria-labelledby="exp-h"><div class="wrap">
+  <h2 id="exp-h">Export your results</h2>
+  <p>Generate a summary of your task answers, quiz result, reflections and flag status to upload as evidence on Canvas. Nothing here is sent anywhere &mdash; the file is built and downloaded entirely in your browser.</p>
+  <div class="card">
+    <div class="row">
+      <div style="flex:1 1 200px"><label for="exp-name">Name</label><input type="text" id="exp-name" autocomplete="off"></div>
+      <div style="flex:1 1 200px"><label for="exp-id">Student ID (optional)</label><input type="text" id="exp-id" autocomplete="off"></div>
+    </div>
+    <p style="margin-top:.8rem"><button type="button" class="alt" id="export-btn">Download evidence file</button></p>
+    <div class="fb" id="export-fb" role="status"></div>
+  </div>
+</div></section>
+
+<section id="takeaways" aria-labelledby="take-h" style="border-bottom:0"><div class="wrap">
+  <h2 id="take-h">Key takeaways</h2>
+  <ul class="tick">
+    <li>Headers are metadata that travel with every request and response, invisible on the page but easy to inspect.</li>
+    <li>Status codes give fast, useful signals, even for pages you can't open.</li>
+    <li>Headers like <code>Server</code> and <code>X-Powered-By</code> can leak exact software versions.</li>
+    <li>Security headers are free, simple defences that are easy to forget.</li>
+    <li>A header can hide an encoded value, just like a page's HTML can.</li>
+  </ul>
+  <div class="card yellow"><p style="margin:0"><b>What next?</b> Try the next room on cookies and sessions, where you'll pick up where <code>Set-Cookie</code> left off here.</p></div>
+</div></section>
+</main>
+
+<footer><div class="wrap"><p>©2026 GLASGOW CLYDE COLLEGE</p><p>CYBER SECURITY LEARNING ROOM</p><p>#LIFECHANGINGSTUFF</p></div></footer>
+
+<script>
+(function(){
+  var FLAG = 'FLAG{' + ['headers','talk','if','you','listen'].join('_') + '}';
+  var B64 = btoa(FLAG);
+  var $=function(id){return document.getElementById(id);};
+  var done={};
+  var ROOM_TITLE = "HTTP Headers: what your browser isn't telling you", ROOM_SLUG = 'http-headers', TASK_COUNT = 4;
+  var taskMeta = {}, quizMeta = {}, flagState = { achieved:false, value:'' };
+
+  var pages = {
+    '/': {status:'200 OK', headers:['Server: Apache/2.2.3','X-Powered-By: PHP/5.3.1','Content-Type: text/html'], body:'Riverside Books — new and secondhand titles, delivered across Glasgow.'},
+    '/staff-area': {status:'403 Forbidden', headers:['Server: Apache/2.2.3','Content-Type: text/html'], body:'You do not have permission to view this page.'},
+    '/basket': {status:'200 OK', headers:['Content-Type: text/html','Set-Cookie: session=9241'], body:'Your basket is empty.'},
+    '/status': {status:'200 OK', headers:['Content-Type: text/plain','X-Debug-Token: ' + B64], body:'All systems normal.'}
+  };
+
+  function render(path){
+    var s = $('screen'), p = pages[path];
+    s.textContent = '';
+    if(!p){ var pre=document.createElement('pre'); pre.textContent='404 Not Found\nNo page exists at ' + path; s.appendChild(pre); return; }
+    var st = document.createElement('p'); st.className='status-line'; st.textContent = 'GET ' + path + '  →  ' + p.status; s.appendChild(st);
+    var pre = document.createElement('pre'); pre.textContent = p.headers.join('\n') + '\n\n' + p.body; s.appendChild(pre);
+  }
+  $('nav-form').addEventListener('submit', function(e){ e.preventDefault(); var v=$('path').value.trim(); if(v.charAt(0)!=='/')v='/'+v; $('path').value=v; render(v); });
+  render('/');
+
+  function norm(v){ return v.toLowerCase().replace(/[\s\/"'`]/g,''); }
+  function fb(id, ok, msg){ var el=$(id); el.className='fb '+(ok?'ok':'no'); el.textContent=(ok?'Correct. ':'Not quite. ')+msg; }
+  function mark(n){ done[n]=true; var c=Object.keys(done).length; $('prog-text').textContent='Progress: '+c+' of 4 tasks complete'; $('bar').style.width=(c*25)+'%'; document.querySelector('[role=progressbar]').setAttribute('aria-valuenow',c); }
+
+  var checks = {
+    1:function(){ var v=$('a1').value.trim(); var ok = v.replace(/[^0-9]/g,'')==='403'; taskMeta[1]={answer:v,correct:ok}; fb('fb1',ok, ok?'403 means the page exists but refuses you, which is still useful information.':'Send a request to /staff-area and read the status line.'); return ok; },
+    2:function(){ var v=$('a2').value.trim(); var ok = norm(v)==='php'; taskMeta[2]={answer:v,correct:ok}; fb('fb2',ok, ok?'PHP/5.3.1 is years out of date, a gift to anyone scanning for known weaknesses.':'Look at the response headers for / and find the X-Powered-By line.'); return ok; },
+    3:function(){ var el=document.querySelector('input[name=t3]:checked'); var v= el? el.value:''; var ok= v==='b'; taskMeta[3]={answer: v? ('option '+v):'(none selected)', correct:ok}; fb('fb3',ok, ok?'X-Frame-Options (or a CSP frame-ancestors rule) stops the page being framed by another site.':'Think about which header specifically controls whether a page can be loaded in a frame.'); return ok; },
+    4:function(){ var v=$('a4').value.trim(); var ok = norm(v).indexOf('xdebugtoken')>-1; taskMeta[4]={answer:v,correct:ok}; fb('fb4',ok, ok?'Now decode its value and submit the result as your flag.':'Check the response headers for /status — one of them isn’t a standard header.'); return ok; }
+  };
+  document.querySelectorAll('button[data-task]').forEach(function(b){ b.addEventListener('click', function(){ var n=b.getAttribute('data-task'); if(checks[n]()) mark(n); }); });
+
+  $('q1-btn').addEventListener('click', function(){
+    var v=document.querySelector('input[name=q1]:checked'), el=$('q1-fb');
+    if(!v){ el.className='fb info'; el.textContent='Pick an answer first.'; return; }
+    var ok=v.value==='b'; el.className='fb '+(ok?'ok':'no');
+    el.textContent= ok ? 'Correct. X-Frame-Options or a CSP frame-ancestors directive prevents clickjacking.' : 'Not quite — think about which header controls whether a page can be embedded in a frame.';
+    quizMeta['Which header prevents clickjacking'] = ok ? 'Correct' : 'Incorrect (selected option '+v.value+')';
+  });
+
+  $('dec-btn').addEventListener('click', function(){
+    var out=$('dec-out'), raw=$('dec-in').value.trim();
+    if(!raw){ out.textContent='Paste a Base64 string first.'; return; }
+    try{ out.textContent = atob(raw); }catch(err){ out.textContent='That doesn’t look like valid Base64. Copy the full header value.'; }
+  });
+
+  var hints=[
+    'Hint 1: send a request to every path shown in the tasks before answering — the inspector shows status, headers and body all at once.',
+    'Hint 2: for Task 4, look for a header name that starts with X- but isn’t one of the standard security headers from the theory table.',
+    'Hint 3: copy the value after "X-Debug-Token:" into the decoder and click Decode Base64. The output is your flag.'
+  ], hi=0;
+  $('hint-btn').addEventListener('click', function(){
+    if(hi<hints.length){ var d=document.createElement('div'); d.className='hint'; d.textContent=hints[hi++]; $('hint-list').appendChild(d); }
+    if(hi>=hints.length){ this.disabled=true; this.textContent='No more hints'; } else this.textContent='Show next hint';
+  });
+
+  $('flag-btn').addEventListener('click', function(){
+    var v=$('flag-in').value.trim(), el=$('flag-fb');
+    if(!v){ el.className='fb info'; el.textContent='Enter a flag first. It starts with FLAG{.'; return; }
+    flagState.value = v;
+    if(v===FLAG){ flagState.achieved = true; el.className='fb ok'; el.textContent='Flag captured. You read a status code, spotted a version leak, named a missing defence, and decoded a hidden header. That is exactly what a header review looks like in practice.'; }
+    else if(/^FLAG\{.*\}$/i.test(v)){ el.className='fb no'; el.textContent='Right format, wrong value. Make sure you decoded the full header exactly.'; }
+    else { el.className='fb no'; el.textContent='That doesn’t look like a flag. Flags use the format FLAG{some_text}.'; }
+  });
+  $('flag-in').addEventListener('keydown', function(e){ if(e.key==='Enter') $('flag-btn').click(); });
+
+  function pad(n){ return n<10 ? '0'+n : ''+n; }
+  function nowStr(){ var d=new Date(); return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes()); }
+  function buildReport(){
+    var name = $('exp-name').value.trim() || '(not entered)';
+    var sid = $('exp-id').value.trim() || '(not entered)';
+    var lines = [];
+    lines.push('Glasgow Clyde College — Cyber Security Learning Room — Evidence of Completion');
+    lines.push('Room: ' + ROOM_TITLE);
+    lines.push('Name: ' + name);
+    lines.push('Student ID: ' + sid);
+    lines.push('Generated: ' + nowStr());
+    lines.push('');
+    lines.push('TASK PROGRESS (' + Object.keys(done).length + ' of ' + TASK_COUNT + ' marked complete)');
+    for(var i=1;i<=TASK_COUNT;i++){
+      var m = taskMeta[i];
+      if(m) lines.push('  Task ' + i + ': ' + (m.correct?'Completed':'Attempted, not yet correct') + ' — answer given: "' + m.answer + '"');
+      else lines.push('  Task ' + i + ': Not attempted');
+    }
+    lines.push('');
+    var qk = Object.keys(quizMeta);
+    if(qk.length){
+      lines.push('MINI QUIZ');
+      qk.forEach(function(k){ lines.push('  ' + k + ': ' + quizMeta[k]); });
+      lines.push('');
+    }
+    lines.push('REFLECTION ANSWERS');
+    for(var i=1;i<=5;i++){
+      var el = $('r'+i);
+      if(el) lines.push('  ' + i + '. ' + (el.value.trim() || '(left blank)'));
+    }
+    lines.push('');
+    lines.push('FLAG');
+    lines.push('  Status: ' + (flagState.achieved ? 'CAPTURED' : 'Not captured'));
+    lines.push('  Last value submitted: ' + (flagState.value || '(none entered)'));
+    lines.push('');
+    lines.push('— End of evidence file —');
+    return lines.join('\n');
+  }
+  $('export-btn').addEventListener('click', function(){
+    var report = buildReport();
+    var blob = new Blob([report], {type:'text/plain'});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    var safeName = ($('exp-name').value.trim() || 'student').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') || 'student';
+    a.href = url; a.download = safeName + '-' + ROOM_SLUG + '-evidence.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    var el = $('export-fb'); el.className='fb ok'; el.textContent='Evidence file downloaded. Upload it to the Canvas assignment.';
+  });
+})();
+</script>
+</body>
+</html>
